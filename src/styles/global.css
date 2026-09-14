@@ -20,20 +20,20 @@
 }
 
 :root {
-  --bg: #eef4f1;
-  --bg-elevated: #f7faf8;
+  --bg: #e8f1ed;
+  --bg-elevated: #f4faf7;
   --ink: #24302c;
   --ink-muted: #5d6f68;
   --accent: #6f9a95;
   --accent-soft: #d5e8e4;
   --sand: #c9a88a;
   --mist: #c8d4ea;
-  --glass: rgba(247, 250, 248, 0.72);
+  --glass: rgba(244, 250, 247, 0.78);
   --border: rgba(36, 48, 44, 0.1);
   --chart: #6f9a95;
-  --grad-a: #dfece7;
-  --grad-b: #e4e8f4;
-  --grad-c: #f0e6da;
+  --grad-a: #cfe6dc;
+  --grad-b: #d4dcf2;
+  --grad-c: #ead9c8;
 }
 
 .dark {
@@ -77,10 +77,10 @@ body {
   font-family: var(--font-sans);
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 10% -10%, var(--grad-a), transparent 55%),
-    radial-gradient(900px 500px at 90% 5%, var(--grad-b), transparent 50%),
-    radial-gradient(800px 500px at 50% 100%, var(--grad-c), transparent 45%),
-    var(--bg);
+    radial-gradient(1100px 640px at 8% -8%, var(--grad-a), transparent 58%),
+    radial-gradient(920px 560px at 92% 0%, var(--grad-b), transparent 52%),
+    radial-gradient(860px 520px at 55% 105%, var(--grad-c), transparent 48%),
+    linear-gradient(165deg, color-mix(in oklab, var(--grad-a) 35%, var(--bg)), var(--bg) 42%, color-mix(in oklab, var(--grad-b) 28%, var(--bg)));
   background-attachment: fixed;
 }
 
