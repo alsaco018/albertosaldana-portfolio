@@ -1,0 +1,28 @@
+---
+import { site } from "../data/content";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border px-5 py-12 sm:px-8 lg:px-12">
+  <div class="mx-auto flex max-w-5xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="font-display text-lg font-semibold text-ink">
+        {site.shortName}
+      </p>
+      <p class="mt-1 text-sm text-ink-muted">
+        © {year} · Hecho con Astro, React y Tailwind
+      </p>
+    </div>
+    <a
+      href={site.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      tabindex="0"
+      aria-label="Perfil de LinkedIn"
+      class="text-sm font-medium text-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      Conectar en LinkedIn
+    </a>
+  </div>
+</footer>

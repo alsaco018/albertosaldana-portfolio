@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Header } from "../components/Header";
+import { Intro } from "../components/sections/Intro";
+import { Work } from "../components/sections/Work";
+import { About } from "../components/sections/About";
+import { Studies } from "../components/sections/Studies";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout>
+  <Header client:load />
+  <main>
+    <Intro client:load />
+    <Work client:visible />
+    <About client:visible />
+    <Studies client:visible />
+  </main>
+  <Footer />
+</BaseLayout>

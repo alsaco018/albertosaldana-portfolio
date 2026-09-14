@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-sand: var(--sand);
+  --color-mist: var(--mist);
+  --color-glass: var(--glass);
+  --color-border: var(--border);
+  --color-chart: var(--chart);
+}
+
+:root {
+  --bg: #eef4f1;
+  --bg-elevated: #f7faf8;
+  --ink: #24302c;
+  --ink-muted: #5d6f68;
+  --accent: #6f9a95;
+  --accent-soft: #d5e8e4;
+  --sand: #c9a88a;
+  --mist: #c8d4ea;
+  --glass: rgba(247, 250, 248, 0.72);
+  --border: rgba(36, 48, 44, 0.1);
+  --chart: #6f9a95;
+  --grad-a: #dfece7;
+  --grad-b: #e4e8f4;
+  --grad-c: #f0e6da;
+}
+
+.dark {
+  --bg: #161d1b;
+  --bg-elevated: #1e2825;
+  --ink: #e7f0ec;
+  --ink-muted: #a3b5ad;
+  --accent: #8fb5b0;
+  --accent-soft: #2a3d39;
+  --sand: #d2b396;
+  --mist: #8fa0c4;
+  --glass: rgba(30, 40, 37, 0.78);
+  --border: rgba(231, 240, 236, 0.12);
+  --chart: #8fb5b0;
+  --grad-a: #1c2925;
+  --grad-b: #1f2433;
+  --grad-c: #2a241c;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, var(--grad-a), transparent 55%),
+    radial-gradient(900px 500px at 90% 5%, var(--grad-b), transparent 50%),
+    radial-gradient(800px 500px at 50% 100%, var(--grad-c), transparent 45%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.glass-panel {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
