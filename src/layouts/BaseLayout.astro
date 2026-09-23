@@ -8,18 +8,19 @@ interface Props {
 
 const {
   title = "Alberto Saldaña Contreras — Portfolio",
-  description = "Ingeniero Informático especializado en Tecnologías de la Información. Frontend Lead en 1xINTERNET. Portfolio con storytelling, animaciones y modo oscuro.",
+  description = "Computer Engineer specialized in Information Technologies. Frontend Lead at 1xINTERNET. A portfolio with storytelling, motion, and Miami neon dark mode.",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#eef4f1" />
+    <meta name="theme-color" content="#f5eef1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#05060f" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,7 +40,21 @@ const {
       })();
     </script>
   </head>
-  <body class="font-sans antialiased text-ink">
-    <slot />
+  <body class="relative font-sans antialiased text-ink">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-bg focus:outline-2 focus:outline-offset-2 focus:outline-accent"
+    >
+      Skip to main content
+    </a>
+    <div class="neon-atmosphere" aria-hidden="true">
+      <div class="neon-atmosphere__grid"></div>
+      <div class="neon-atmosphere__orb neon-atmosphere__orb--pink"></div>
+      <div class="neon-atmosphere__orb neon-atmosphere__orb--cyan"></div>
+      <div class="neon-atmosphere__scan"></div>
+    </div>
+    <div class="relative z-10">
+      <slot />
+    </div>
   </body>
 </html>

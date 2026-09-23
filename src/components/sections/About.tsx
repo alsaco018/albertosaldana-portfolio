@@ -5,20 +5,17 @@ import { SectionReveal } from "../ui/SectionReveal";
 export const About = () => {
   return (
     <section
-      id="sobre-mi"
-      aria-labelledby="sobre-mi-heading"
-      className="relative px-5 py-24 sm:px-8 lg:px-12"
+      id="about"
+      aria-labelledby="about-heading"
+      className="relative z-10 px-5 py-24 sm:px-8 lg:px-12"
     >
       <div className="mx-auto max-w-5xl">
         <SectionReveal>
-          <p className="mb-3 text-sm font-medium tracking-wide text-accent uppercase">
-            Capítulo 02
-          </p>
           <h2
-            id="sobre-mi-heading"
-            className="font-display text-3xl font-bold tracking-tight text-ink sm:text-5xl"
+            id="about-heading"
+            className="neon-text-pink font-display text-3xl font-bold tracking-tight text-ink sm:text-5xl"
           >
-            Sobre mí
+            About me
           </h2>
           <div className="mt-6 max-w-2xl space-y-4 text-base leading-relaxed text-ink-muted sm:text-lg">
             {aboutParagraphs.map((paragraph) => (

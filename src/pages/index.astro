@@ -3,18 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { Header } from "../components/Header";
 import { Intro } from "../components/sections/Intro";
 import { Work } from "../components/sections/Work";
+import { Technologies } from "../components/sections/Technologies";
 import { About } from "../components/sections/About";
 import { Studies } from "../components/sections/Studies";
+import { Loves } from "../components/sections/Loves";
 import Footer from "../components/Footer.astro";
 ---
 
 <BaseLayout>
   <Header client:load />
-  <main>
+  <main id="main-content">
     <Intro client:load />
     <Work client:visible />
+    <Technologies client:visible />
     <About client:visible />
     <Studies client:visible />
+    <Loves client:visible />
   </main>
   <Footer />
 </BaseLayout>

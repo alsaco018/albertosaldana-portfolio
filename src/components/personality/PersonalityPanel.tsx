@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { PersonalityStat } from "../../data/content";
 
 type RadarChartProps = {
@@ -8,9 +8,10 @@ type RadarChartProps = {
   onSelect: (id: string) => void;
 };
 
-const SIZE = 280;
+const SIZE = 400;
 const CENTER = SIZE / 2;
-const RADIUS = 100;
+const RADIUS = 118;
+const LABEL_RADIUS = RADIUS + 48;
 
 const polarToCartesian = (angle: number, radius: number) => {
   const rad = ((angle - 90) * Math.PI) / 180;
@@ -18,6 +19,31 @@ const polarToCartesian = (angle: number, radius: number) => {
     x: CENTER + radius * Math.cos(rad),
     y: CENTER + radius * Math.sin(rad),
   };
+};
+
+const getLabelLines = (label: string): string[] => {
+  if (label.includes(" / ")) {
+    const [left, right] = label.split(" / ");
+    return [left, `/ ${right}`];
+  }
+  if (label.includes("-")) {
+    const [left, right] = label.split("-");
+    return [`${left}-`, right];
+  }
+  if (label.includes(" ")) {
+    const parts = label.split(" ");
+    if (parts.length >= 2) {
+      return [parts[0], parts.slice(1).join(" ")];
+    }
+  }
+  return [label];
+};
+
+const getTextAnchor = (angle: number): "start" | "middle" | "end" => {
+  const normalized = ((angle % 360) + 360) % 360;
+  if (normalized > 20 && normalized < 160) return "start";
+  if (normalized > 200 && normalized < 340) return "end";
+  return "middle";
 };
 
 export const RadarChart = ({ stats, activeId, onSelect }: RadarChartProps) => {
@@ -36,12 +62,15 @@ export const RadarChart = ({ stats, activeId, onSelect }: RadarChartProps) => {
   }, [stats, angleStep]);
 
   return (
-    <div className="relative mx-auto w-full max-w-[320px]">
+    <div
+      className="relative mx-auto w-full max-w-[420px]"
+      role="group"
+      aria-label="Personality radar chart"
+    >
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
-        role="img"
-        aria-label="Gráfica radar de personalidad"
-        className="h-auto w-full"
+        aria-hidden="true"
+        className="h-auto w-full overflow-visible"
       >
         {gridLevels.map((level) => {
           const points = stats
@@ -89,21 +118,26 @@ export const RadarChart = ({ stats, activeId, onSelect }: RadarChartProps) => {
         />
 
         {stats.map((stat, index) => {
-          const point = polarToCartesian(index * angleStep, (stat.value / 100) * RADIUS);
-          const labelPoint = polarToCartesian(index * angleStep, RADIUS + 28);
+          const angle = index * angleStep;
+          const point = polarToCartesian(angle, (stat.value / 100) * RADIUS);
+          const labelPoint = polarToCartesian(angle, LABEL_RADIUS);
           const isActive = activeId === stat.id;
+          const lines = getLabelLines(stat.label);
+          const textAnchor = getTextAnchor(angle);
 
           return (
             <g key={stat.id}>
-              <motion.circle
+              {/* Invisible hit target ≥ 24×24px for WCAG 2.5.8 */}
+              <circle
                 cx={point.x}
                 cy={point.y}
-                r={isActive ? 7 : 5}
-                fill="var(--chart)"
-                className="cursor-pointer"
+                r={14}
+                fill="transparent"
+                className="cursor-pointer focus:outline-none"
                 tabIndex={0}
                 role="button"
-                aria-label={`${stat.label}: ${stat.value}`}
+                aria-pressed={isActive}
+                aria-label={`${stat.label}: ${stat.value} out of 100`}
                 onClick={() => onSelect(stat.id)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -111,16 +145,50 @@ export const RadarChart = ({ stats, activeId, onSelect }: RadarChartProps) => {
                     onSelect(stat.id);
                   }
                 }}
-                whileHover={{ scale: 1.25 }}
               />
+              <motion.circle
+                cx={point.x}
+                cy={point.y}
+                r={isActive ? 7 : 5}
+                fill="var(--chart)"
+                className="pointer-events-none"
+                aria-hidden
+                animate={{
+                  r: isActive ? 7 : 5,
+                  filter: isActive
+                    ? "drop-shadow(0 0 6px var(--chart))"
+                    : "drop-shadow(0 0 0 transparent)",
+                }}
+              />
+              {isActive && (
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={11}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="2"
+                  className="pointer-events-none dark:stroke-[var(--neon-cyan)]"
+                  aria-hidden
+                />
+              )}
               <text
                 x={labelPoint.x}
                 y={labelPoint.y}
-                textAnchor="middle"
+                textAnchor={textAnchor}
                 dominantBaseline="middle"
-                className="fill-ink-muted text-[9px] font-medium"
+                className="fill-ink-muted text-[11px] font-medium"
+                aria-hidden
               >
-                {stat.label.split(" ")[0]}
+                {lines.map((line, lineIndex) => (
+                  <tspan
+                    key={line}
+                    x={labelPoint.x}
+                    dy={lineIndex === 0 ? `${-((lines.length - 1) * 0.55)}em` : "1.15em"}
+                  >
+                    {line}
+                  </tspan>
+                ))}
               </text>
             </g>
           );
@@ -150,22 +218,22 @@ export const StatBars = ({ stats, activeId, onSelect }: StatBarsProps) => {
               onClick={() => onSelect(stat.id)}
               tabIndex={0}
               aria-pressed={isActive}
-              aria-label={`${stat.label}: ${stat.value} de 100`}
+              aria-label={`${stat.label}: ${stat.value} out of 100`}
               className={`w-full rounded-2xl border px-3 py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                 isActive
-                  ? "border-accent bg-accent-soft/70"
-                  : "border-border bg-bg-elevated/50 hover:border-accent/50"
+                  ? "border-accent bg-accent-soft/70 dark:border-neon-cyan/50 dark:shadow-[0_0_18px_rgba(0,229,255,0.2)]"
+                  : "border-border bg-bg-elevated/50 hover:border-accent/50 dark:hover:border-neon-pink/40"
               }`}
             >
               <div className="mb-2 flex items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-ink">{stat.label}</span>
-                <span className="font-display text-sm font-bold text-accent">
+                <span className="font-display text-sm font-bold text-accent dark:text-neon-cyan">
                   {stat.value}
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-border/60">
+              <div className="h-2 overflow-hidden rounded-full bg-border/60 dark:bg-neon-cyan/15">
                 <motion.div
-                  className="h-full rounded-full bg-accent"
+                  className="h-full rounded-full bg-accent dark:bg-gradient-to-r dark:from-neon-pink dark:to-neon-cyan"
                   initial={reduce ? { width: `${stat.value}%` } : { width: 0 }}
                   whileInView={{ width: `${stat.value}%` }}
                   viewport={{ once: true }}
@@ -177,6 +245,37 @@ export const StatBars = ({ stats, activeId, onSelect }: StatBarsProps) => {
                 />
               </div>
             </button>
+
+            <AnimatePresence initial={false}>
+              {isActive && (
+                <motion.aside
+                  key={`lore-mobile-${stat.id}`}
+                  initial={
+                    reduce
+                      ? { opacity: 1, height: "auto" }
+                      : { opacity: 0, height: 0, y: -8 }
+                  }
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={
+                    reduce
+                      ? { opacity: 0 }
+                      : { opacity: 0, height: 0, y: -6 }
+                  }
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden lg:hidden"
+                  aria-live="polite"
+                >
+                  <div className="mt-3 rounded-2xl border border-border bg-bg-elevated/70 p-4 dark:border-neon-pink/30 dark:shadow-[0_0_20px_rgba(255,45,149,0.12)]">
+                    <p className="font-display text-sm font-semibold text-ink dark:text-neon-cyan">
+                      {stat.label}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+                      {stat.lore}
+                    </p>
+                  </div>
+                </motion.aside>
+              )}
+            </AnimatePresence>
           </li>
         );
       })}
@@ -189,6 +288,7 @@ type PersonalityPanelProps = {
 };
 
 export const PersonalityPanel = ({ stats }: PersonalityPanelProps) => {
+  const reduce = useReducedMotion();
   const [activeId, setActiveId] = useState<string | null>(stats[0]?.id ?? null);
   const active = stats.find((stat) => stat.id === activeId) ?? stats[0];
 
@@ -199,14 +299,14 @@ export const PersonalityPanel = ({ stats }: PersonalityPanelProps) => {
   return (
     <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:items-start">
       <div className="glass-panel rounded-[1.75rem] p-5 sm:p-6">
-        <p className="mb-1 text-xs font-semibold tracking-wide text-sand uppercase">
-          Personaje · stats
+        <p className="mb-1 text-xs font-semibold tracking-wide text-sand uppercase dark:text-neon-pink">
+          Character · stats
         </p>
         <h3 className="font-display text-xl font-semibold text-ink">
-          Panel de personalidad
+          Personality panel
         </h3>
         <p className="mt-1 mb-4 text-sm text-ink-muted">
-          Toca una barra o un nodo del radar para revelar el lore.
+          Tap a bar or a radar node to reveal the lore.
         </p>
         <RadarChart stats={stats} activeId={activeId} onSelect={handleSelect} />
       </div>
@@ -216,13 +316,13 @@ export const PersonalityPanel = ({ stats }: PersonalityPanelProps) => {
         {active && (
           <motion.aside
             key={active.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={reduce ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="mt-5 rounded-2xl border border-border bg-bg-elevated/70 p-4"
+            className="mt-5 hidden rounded-2xl border border-border bg-bg-elevated/70 p-4 lg:block dark:border-neon-pink/30 dark:shadow-[0_0_20px_rgba(255,45,149,0.12)]"
             aria-live="polite"
           >
-            <p className="font-display text-sm font-semibold text-ink">
+            <p className="font-display text-sm font-semibold text-ink dark:text-neon-cyan">
               {active.label}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-ink-muted">
