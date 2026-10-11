@@ -30,6 +30,10 @@ networks:
   web:
     name: portfolio_web
     driver: bridge
+    networks:
+  web:
+    external: true
+    name: albertosaldana-portfolio_web
 
 volumes:
   caddy_data:
