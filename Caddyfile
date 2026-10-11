@@ -8,8 +8,8 @@
 }
 
 tukura.es, www.tukura.es {
-	encode gzip
-	reverse_proxy tukura:80
+    encode gzip
+    reverse_proxy tukura:80
 }
 
 tu-kura.com, www.tu-kura.com {
