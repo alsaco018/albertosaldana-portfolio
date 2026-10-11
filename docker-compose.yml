@@ -28,6 +28,7 @@ services:
 
 networks:
   web:
+    name: portfolio_web
     driver: bridge
 
 volumes:

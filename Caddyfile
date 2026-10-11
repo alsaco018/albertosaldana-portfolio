@@ -6,3 +6,12 @@
 	encode gzip
 	reverse_proxy portfolio:80
 }
+
+tukura.es, www.tukura.es {
+	encode gzip
+	reverse_proxy tukura:80
+}
+
+tu-kura.com, www.tu-kura.com {
+	redir https://tukura.es{uri} permanent
+}
