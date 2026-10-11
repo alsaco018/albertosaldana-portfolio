@@ -1,3 +1,5 @@
+# Legacy: this project now uses host Nginx → 127.0.0.1:8081.
+# Kept only as historical reference; Caddy is not started by docker-compose.
 {
 	email {$ACME_EMAIL}
 }
@@ -5,13 +7,4 @@
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip
 	reverse_proxy portfolio:80
-}
-
-tukura.es, www.tukura.es {
-    encode gzip
-    reverse_proxy tukura:80
-}
-
-tu-kura.com, www.tu-kura.com {
-	redir https://tukura.es{uri} permanent
 }

@@ -27,7 +27,7 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail
-            cd /opt/portfolio
+            cd /opt/albertosaldana-portfolio
             git fetch origin main
             git reset --hard origin/main
             docker compose up -d --build --remove-orphans

@@ -1,36 +1,9 @@
+# Host Nginx reverse-proxies to published localhost ports (no Caddy).
+# portfolio → 127.0.0.1:8081
 services:
   portfolio:
     build: .
-    restart: unless-stopped
-    expose:
-      - "80"
-    networks:
-      - web
-
-  caddy:
-    image: caddy:2-alpine
+    container_name: portfolio
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    environment:
-      DOMAIN: ${DOMAIN:-albertosaldana.dev}
-      ACME_EMAIL: ${ACME_EMAIL}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - portfolio
-    networks:
-      - web
-
-networks:
-  web:
-    external: true
-    name: albertosaldana-portfolio_web
-
-volumes:
-  caddy_data:
-  caddy_config:
+      - "127.0.0.1:8081:80"
